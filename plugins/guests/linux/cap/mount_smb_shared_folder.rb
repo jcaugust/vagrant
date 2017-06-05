@@ -31,6 +31,9 @@ module VagrantPlugins
           mount_options += ",#{Array(options[:mount_options]).join(",")}" if options[:mount_options]
           mount_command = "mount -t cifs #{mount_options} #{mount_device} #{expanded_guest_path}"
 
+          # proactively dismount any existing defunct share
+          machine.communicate.sudo("umount -f #{expanded_guest_path}; exit 0")
+
           # Create the guest path if it doesn't exist
           machine.communicate.sudo("mkdir -p #{expanded_guest_path}")
 
